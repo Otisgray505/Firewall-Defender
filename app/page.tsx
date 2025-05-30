@@ -14,6 +14,7 @@ import LatestDealsSection from "@/components/latest-deals-section"
 
 // Dynamic imports for better performance
 const TestimonialsSection = dynamic(() => import("@/components/testimonials-section"), {
+  ssr: false,
   loading: () => (
     <section className="py-8 sm:py-12 md:py-16">
       <div className="container px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
