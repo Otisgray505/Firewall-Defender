@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Star } from "lucide-react"
 
@@ -28,6 +29,17 @@ const testimonials = [
 ]
 
 export default function TestimonialsSection() {
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  // Don't render anything on the server
+  if (!isMounted) {
+    return null
+  }
+
   return (
     <section className="py-8 sm:py-12 md:py-16">
       <div className="container px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
