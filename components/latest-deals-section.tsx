@@ -1,4 +1,4 @@
-"use client"
+[⚠️ Suspicious Content] "use client"
 
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -23,89 +23,87 @@ export default function LatestDealsSection() {
   const [deals, setDeals] = useState<Deal[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
+    setIsMounted(true)
+
     async function fetchDeals() {
       try {
         setLoading(true)
-        const response = await fetch("/api/latest-deals")
-        if (!response.ok) {
-          // Fallback to mock data if API is not available
-          const mockDeals: Deal[] = [
+        // Use a try-catch block for fetch to avoid uncaught errors
+        try {
+          const response = await fetch("/api/latest-deals")
+          if (!response.ok) {
+            throw new Error("Failed to fetch deals")
+          }
+          const data = await response.json()
+          setDeals(data.deals || [])
+        } catch (err) {
+          console.log("Using fallback deals data")
+          // Fallback deals data
+          const fallbackDeals: Deal[] = [
             {
               id: "1",
-              title: "Early Bird Special",
-              description: "Book 60 days in advance and save big on international flights",
-              originalPrice: 899,
-              salePrice: 699,
-              discount: 22,
-              destination: "Tokyo",
+              title: "Flash Sale",
+              description: "Limited time offer on selected routes",
+              originalPrice: 599,
+              salePrice: 399,
+              discount: 33,
+              destination: "Singapore",
               validUntil: "2024-12-31",
               featured: true,
             },
             {
               id: "2",
-              title: "Weekend Getaway",
-              description: "Perfect for short trips with flexible dates",
-              originalPrice: 299,
-              salePrice: 199,
-              discount: 33,
-              destination: "Bali",
-              validUntil: "2024-12-15",
+              title: "Family Package",
+              description: "Special rates for family bookings",
+              originalPrice: 1200,
+              salePrice: 899,
+              discount: 25,
+              destination: "Sydney",
+              validUntil: "2024-12-25",
               featured: false,
             },
-            {
-              id: "3",
-              title: "Business Class Upgrade",
-              description: "Experience luxury travel at an unbeatable price",
-              originalPrice: 1299,
-              salePrice: 999,
-              discount: 23,
-              destination: "London",
-              validUntil: "2024-12-20",
-              featured: true,
-            },
           ]
-          setDeals(mockDeals)
-          return
+          setDeals(fallbackDeals)
         }
-        const data = await response.json()
-        setDeals(data.deals || [])
-      } catch (err: any) {
-        console.log("Using fallback deals data")
-        // Fallback deals data
-        const fallbackDeals: Deal[] = [
-          {
-            id: "1",
-            title: "Flash Sale",
-            description: "Limited time offer on selected routes",
-            originalPrice: 599,
-            salePrice: 399,
-            discount: 33,
-            destination: "Singapore",
-            validUntil: "2024-12-31",
-            featured: true,
-          },
-          {
-            id: "2",
-            title: "Family Package",
-            description: "Special rates for family bookings",
-            originalPrice: 1200,
-            salePrice: 899,
-            discount: 25,
-            destination: "Sydney",
-            validUntil: "2024-12-25",
-            featured: false,
-          },
-        ]
-        setDeals(fallbackDeals)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchDeals()
-  }, [])
+    if (isMounted) {
+      fetchDeals()
+    }
+  }, [isMounted])
+
+  // Don't render anything on the server
+  if (!isMounted) {
+    return (
+      <section className="py-8 sm:py-12 md:py-16 bg-gradient-to-r from-primaryBlue/5 to-accentPurple/5">
+        <div className="container px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
+          <div className="text-center mb-8 sm:mb-12">
+            <div className="h-8 sm:h-10 bg-muted rounded-lg w-64 mx-auto mb-4 animate-pulse"></div>
+            <div className="h-4 bg-muted rounded w-96 mx-auto animate-pulse"></div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Card key={i} className="overflow-hidden">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="space-y-4">
+                    <div className="h-6 bg-muted rounded animate-pulse"></div>
+                    <div className="h-4 bg-muted rounded animate-pulse"></div>
+                    <div className="h-8 bg-muted rounded animate-pulse"></div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   if (loading) {
     return (
