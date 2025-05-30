@@ -73,11 +73,8 @@ const mockDeals: Deal[] = [
 
 export async function GET() {
   try {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
     // Return featured deals first, then others
-    const sortedDeals = mockDeals.sort((a, b) => {
+    const sortedDeals = [...mockDeals].sort((a, b) => {
       if (a.featured && !b.featured) return -1
       if (!a.featured && b.featured) return 1
       return 0
@@ -88,6 +85,7 @@ export async function GET() {
       success: true,
     })
   } catch (error) {
+    console.error("Error in latest-deals API route:", error)
     return NextResponse.json({ error: "Failed to fetch deals", success: false }, { status: 500 })
   }
 }
